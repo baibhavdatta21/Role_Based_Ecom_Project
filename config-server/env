@@ -1,0 +1,7 @@
+USER_DB_URL=mongodb://localhost:27017/userdb
+PRODUCT_DB_URL=jdbc:postgresql://localhost:5432/productdb
+PRODUCT_DB_USERNAME=embarkx
+PRODUCT_DB_PASSWORD=embarkx
+ORDER_DB_URL=jdbc:postgresql://localhost:5432/orderdb
+ORDER_DB_USERNAME=embarkx
+ORDER_DB_PASSWORD=embarkx
