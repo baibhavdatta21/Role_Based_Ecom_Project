@@ -1,51 +1,105 @@
-🛒 Ecom – Spring Boot E-Commerce Backend API
+# 🛒 E-Commerce Microservices Backend
 
-Ecom is a backend RESTful E-commerce application developed using Spring Boot, designed to support core online shopping operations for Consumers and Sellers.
-The application follows clean layered architecture, implements secure authentication & authorization using JWT, and focuses on scalability, modularity, and testability.
+A production-ready, cloud-native e-commerce REST API built with **Spring Boot** and a full **microservices architecture**. The system covers user management, product catalogue, shopping cart, and order placement — secured with JWT and role-based access control.
 
+---
 
-Centralized exception handling
+## 🏗️ Architecture Overview
 
-Clean REST API design following best practices
-🚀 Key Features
+```
+Client → API Gateway → [User Service | Product Service | Order Service]
+                ↑               ↑
+         Eureka (Discovery)   Config Server
+```
 
-🔐 JWT-based Authentication & Authorization
-Secure login and role-based access control for Consumers and Sellers
-Spring Security integration with custom filters
+| Service | Port | Responsibility |
+|---|---|---|
+| `config-server` | 8888 | Centralised configuration via Spring Cloud Config |
+| `eureka` | 8761 | Service registry and discovery (Netflix Eureka) |
+| `gateway` | 8080 | JWT validation, role-based routing, logging |
+| `user` | 8081 | Registration, login, profile management |
+| `product` | 8082 | Product CRUD, KMP-based search |
+| `order` | 8083 | Cart management and order placement |
 
-🧑‍💼 Role-Based Access Control
-Restricted endpoints based on user roles (Admin / Consumer / Seller)
-Ensures secure and controlled API access
+---
 
-📦 Product Management
-Sellers can add, manage, and retrieve products
-Public product search APIs for consumers
+## 🚀 Features
 
-🛍️ Cart & User Operations
-Cart management and user-specific operations
-Clean separation of responsibilities across services
+- **JWT Authentication** — Stateless token-based auth issued by the User Service and validated at the Gateway
+- **Role-Based Access Control** — Three roles: `ADMIN`, `SELLER`, `CUSTOMER` enforced at the gateway layer
+- **KMP Search Algorithm** — Efficient substring product search using Knuth-Morris-Pratt
+- **Inter-Service Communication** — Feign clients between Order and User/Product services
+- **Centralised Config** — All service configs served from Spring Cloud Config Server
+- **Service Discovery** — All services register with Eureka for load-balanced routing (`lb://`)
+- **Comprehensive Tests** — Unit tests for all controllers, services, and utilities
 
-🗄️ Database Integration
-Relational database integration using Spring Data JPA
-Optimized entity relationships and repositories
+---
 
-🧪 Unit & Integration Testing
-Extensive testing using JUnit 5 and MockMvc
-Achieved 80%+ code coverage using JaCoCo
+## 🔐 Security Model
 
-📊 Code Quality & Maintainability
-Modular service layer design
-Centralized exception handling
-Clean REST API design following best practices
+Public routes (`/api/public/**`) require no token. Authenticated routes (`/api/auth/**`) require a valid JWT Bearer token in the `Authorization` header. The Gateway extracts the user ID and propagates it downstream via the `X-User-ID` header.
 
-🛠️ Tech Stack
-Backend: Java 17, Spring Boot 3.x
-Security: Spring Security, JWT
-Database: MySQL (JPA / Hibernate)
-Testing: JUnit 5, MockMvc, JaCoCo
-Build Tool: Maven
-Version Control: Git, GitHub
+| Role | Capabilities |
+|---|---|
+| `ADMIN` | Full access to all endpoints |
+| `SELLER` | Create, update, and delete products |
+| `CUSTOMER` | Browse products, manage cart, place orders |
 
-👨‍💻 Author
-Baibhav Datta
-Java | Spring Boot | Backend Developer
+---
+
+## 🛠️ Tech Stack
+
+- **Framework:** Spring Boot 3.x, Spring Cloud
+- **Security:** Spring Security, JJWT
+- **Database:** MySQL (JPA / Hibernate)
+- **Service Mesh:** Netflix Eureka, Spring Cloud Gateway
+- **Config:** Spring Cloud Config Server
+- **Build:** Maven
+- **Testing:** JUnit 5, Mockito, Spring Security Test
+
+---
+
+## ▶️ Running Locally
+
+Start services in this order:
+
+```bash
+# 1. Config Server
+cd config-server && ./mvnw spring-boot:run
+
+# 2. Eureka
+cd eureka && ./mvnw spring-boot:run
+
+# 3. Business services (any order)
+cd user    && ./mvnw spring-boot:run
+cd product && ./mvnw spring-boot:run
+cd order   && ./mvnw spring-boot:run
+
+# 4. Gateway (last)
+cd gateway && ./mvnw spring-boot:run
+```
+
+All requests should go through the Gateway on **port 8080**.
+
+---
+
+## 📋 API Endpoints
+
+| Endpoint | Method | Authorization | Description |
+|---|---|---|---|
+| `api/public/users/signup` | POST | Public | Register a new customer account |
+| `api/public/users/login` | POST | Public | Login and receive a JWT token |
+| `api/public/products/search` | GET | Public | Search products by keyword (KMP) |
+| `api/auth/users/signup-admin` | POST | Admin | Create a new Admin account |
+| `api/auth/users` | GET | Admin | Get all users |
+| `api/auth/users/{id}` | GET | Admin | Get a user by ID |
+| `api/auth/users/{id}` | PUT | Admin, Customer, Seller | Update a user profile |
+| `api/auth/users/{id}` | DELETE | Admin, Customer, Seller | Delete a user account |
+| `api/auth/products` | POST | Admin, Seller | Create a new product |
+| `api/auth/products/{id}` | PUT | Admin, Seller | Update a product |
+| `api/auth/products/{id}` | GET | Admin, Customer, Seller | Get a product by ID |
+| `api/auth/products/{id}` | DELETE | Admin, Seller | Delete a product |
+| `api/auth/cart` | POST | Admin, Customer | Add a product to cart |
+| `api/auth/cart/items/{productId}` | DELETE | Admin, Customer | Remove a product from cart |
+| `api/auth/cart` | GET | Admin, Customer | View cart contents |
+| `api/auth/orders` | POST | Admin, Customer | Place an order from cart |
