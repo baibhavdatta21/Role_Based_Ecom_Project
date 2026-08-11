@@ -11,6 +11,8 @@ import com.ecommerce.order.repository.CartItemRepository;
 //import com.example.demo.model.User;
 //import com.example.demo.repository.ProductRepositoy;
 //import com.example.demo.repository.UserRepository;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.retry.annotation.Retry;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -30,8 +32,11 @@ public class CartService {
     private ProductClient productClient;
     @Autowired
     private UserClient userClient;
+    int attempt=0;
 //    private final ProductRepositoy productRepositoy;
 //    private final UserRepository userRepository;
+//    @CircuitBreaker(name="productServ", fallbackMethod = "addToCartFallback")
+    @Retry(name="retryBreaker", fallbackMethod = "addToCartFallback")
     public boolean addToCart(String userId, CartItemRequest request) {
 //        Optional<Product> productOpt = cartItemRepository.findById(request.getProductId());
 //        if (productOpt.isEmpty()) {
@@ -46,11 +51,13 @@ public class CartService {
 //            return false;
 //        }
 //        User user=UserOpt.get();
+        System.out.println("Attempt Count: "+ ++attempt);
         ResponseEntity<UserResponse> userResponse=userClient.getUserById(userId);
         if (userResponse.getBody()==null) {
             return false;
         }
         Integer integer=Integer.valueOf(request.getProductId());
+        System.out.println("Got the user");
         ResponseEntity<ProductResponse> productResponse=productClient.getProductById(integer);
         System.out.println(productResponse.getStatusCode());
         System.out.println(productResponse.getBody());
@@ -71,6 +78,10 @@ public class CartService {
             cartItemRepository.save(cartItem);
         }
         return true;
+    }
+    public boolean addToCartFallback(String userId, CartItemRequest request, Exception e) {
+        System.out.println("Circuit breaker triggered! Fallback called: " + e.getMessage());
+        return false;  // Or return cached data
     }
     @Transactional
     public boolean deleteItemFromCart(String userId, Integer productId) {

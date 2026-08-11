@@ -19,16 +19,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
-/**
- * Unit Test Cases for UserDetailsService2
- * Following TCS BFSI Project Standards
- *
- * Test Coverage:
- * - Loading user details by username/email
- * - User not found scenarios
- * - UserPrincipal creation
- * - Error handling
- */
 @ExtendWith(MockitoExtension.class)
 @DisplayName("UserDetailsService2 Test Suite")
 public class UserDetailsService2Tests {

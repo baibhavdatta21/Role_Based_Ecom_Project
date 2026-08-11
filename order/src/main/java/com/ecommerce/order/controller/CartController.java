@@ -18,9 +18,10 @@ public class CartController {
     @PostMapping
     public ResponseEntity<?> addToCart(@RequestHeader("X-User-ID") String userId
                                             ,@RequestBody CartItemRequest request){
+        System.out.println("Did hit");
         if(!cartService.addToCart(userId,request))
-            return ResponseEntity.badRequest().body("Product out of stock or user not found or product not found");
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+            return ResponseEntity.badRequest().body("A Service down Product out of stock or user not found or product not found");
+        return ResponseEntity.status(HttpStatus.CREATED).body("Cart product added");
     }
     @DeleteMapping("/items/{productId}")
     public ResponseEntity<Void> removeFromCart( @RequestHeader("X-User-ID") String userId

@@ -26,10 +26,10 @@ public class ProductController {
         return productService.updateProduct(id, productRequest).map(ResponseEntity:: ok)
                 .orElseGet(()->ResponseEntity.notFound().build());
     }
-//    @GetMapping("/api/products")
-//    public ResponseEntity<List<ProductResponse>> createProduct(){
-//        return new ResponseEntity<List<ProductResponse>>(productService.getAllProducts(), HttpStatus.OK);
-//    }
+    @GetMapping("/api/products")
+    public ResponseEntity<List<ProductResponse>> createProduct(){
+        return new ResponseEntity<List<ProductResponse>>(productService.getAllProducts(), HttpStatus.OK);
+    }
     @GetMapping("/api/auth/products/{id}")
     public ResponseEntity<ProductResponse> getProductById(@PathVariable("id") Integer id){
         ProductResponse productResponse=productService.getProductById(id);
@@ -52,5 +52,13 @@ public class ProductController {
     @GetMapping("api/public/products/search")
     public ResponseEntity<List<ProductResponse>> searchProducts(@RequestParam String keyword){
         return new ResponseEntity<List<ProductResponse>>(productService.searchProducts(keyword), HttpStatus.OK);
+    }
+
+    @GetMapping("/api/public/products/simulate/failure")
+    public ResponseEntity<String> simulateFailure(@RequestParam(defaultValue = "false") boolean fail){
+        if(fail){
+            throw new RuntimeException("Simulated Failure for Testing");
+        }
+        return ResponseEntity.ok("Product Service is OK");
     }
 }

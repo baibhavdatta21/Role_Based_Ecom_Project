@@ -29,7 +29,7 @@ public class RoleAuthorizationConfig {
 //        mapping.put("PUT:/api/order/**", "ADMIN,CUSTOMER");
 
         // ==================== USERS ENDPOINT ====================
-        mapping.put("GET:/api/users/**", "ADMIN");
+        mapping.put("GET:/api/auth/users/**", "ADMIN");
         mapping.put("DELETE:/api/auth/users/**", "ADMIN,CUSTOMER,SELLER");
         mapping.put("POST:/api/users/signup-admin", "ADMIN");
         mapping.put("PUT:/api/users", "ADMIN,CUSTOMER,SELLER");

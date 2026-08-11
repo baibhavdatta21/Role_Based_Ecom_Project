@@ -88,7 +88,7 @@ public class UserService {
             User u=userRepository.findByEmail(userRequest.getEmail()).orElseThrow(()->new BadCredentialsException("ok"));
             UserPrincipal up= new UserPrincipal(u);
             Authentication man = authManager.authenticate(new UsernamePasswordAuthenticationToken(up.getUsername()
-                                                                                                ,up.getPassword()
+                                                                                                ,userRequest.getPassword()
                                                                                                 ,up.getAuthorities()));
 
             if (man.isAuthenticated()) {
