@@ -11,3 +11,4 @@ public interface ProductClient {
     @GetMapping("/api/auth/products/{id}")
     ResponseEntity<ProductResponse> getProductById(@PathVariable("id") Integer id);
 }
+

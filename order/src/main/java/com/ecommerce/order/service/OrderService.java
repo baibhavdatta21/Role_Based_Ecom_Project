@@ -10,6 +10,8 @@ import com.ecommerce.order.repository.OrderRepository;
 //import com.example.demo.model.*;
 //import com.example.demo.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,18 +24,11 @@ import java.util.Optional;
 @Transactional
 public class OrderService {
     private final CartService cartService;
-//    private final UserRepository userRepository;
     private final OrderRepository orderRepository;
-    public Optional<OrderResponse> createOrder(String userId) {
+    private static Logger logger= LoggerFactory.getLogger(OrderService.class);
+    public OrderResponse createOrder(String userId) {
+        logger.info("Initiating the cart creation for user Id:{}",userId);
         List<CartItem> cartItems=cartService.getCartProducts(userId);
-//        if(cartItems.isEmpty()){
-//            return Optional.empty();
-//        }
-//        Optional<User> userOptional=userRepository.findById(Integer.valueOf(userId));
-//        if(userOptional.isEmpty()){
-//            return Optional.empty();
-//        }
-//        User user=userOptional.get();
         BigDecimal totalPrice=cartItems.stream()
                 .map(m->m.getPrice())
                 .reduce(BigDecimal.ZERO,BigDecimal::add);
@@ -54,10 +49,11 @@ public class OrderService {
         order.setItems(orderItems);
         Order savedOrder=orderRepository.save(order);
         cartService.clearCart(userId);
-        return Optional.of(mapToOrderResponse(savedOrder));
+        return mapToOrderResponse(savedOrder);
     }
 
     private OrderResponse mapToOrderResponse(Order order) {
+        logger.debug("Initiating the mapping response for order");
         return new OrderResponse(
                 order.getId(),
                 order.getTotalAmount(),

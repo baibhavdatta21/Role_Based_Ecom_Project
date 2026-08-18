@@ -24,7 +24,7 @@ public class RoleAuthorizationConfig {
         mapping.put("DELETE:/api/cart/**", "ADMIN,CUSTOMER");
 
         // ==================== ORDER ENDPOINT ====================
-        mapping.put("GET:/api/order/**", "ADMIN,CUSTOMER");
+        mapping.put("GET:/api/auth/orders/**", "ADMIN,CUSTOMER");
 //        mapping.put("POST:/api/order/**", "ADMIN,CUSTOMER");
 //        mapping.put("PUT:/api/order/**", "ADMIN,CUSTOMER");
 

@@ -54,7 +54,7 @@ public class GatewayConfg {
                 )
                 // Order Service
                 .route("order", r -> r
-                        .path("/api/auth/order/**")
+                        .path("/api/auth/orders/**")
                         .filters(f -> f.filter(authFilter.apply(new AuthFilter.Config()))
                                 .circuitBreaker(config -> config
                                         .setName("ecomBreaker")

@@ -14,11 +14,8 @@ public class CartItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-
     private String userId;
-
     private String productId;
-
     private Integer quantity;
     private BigDecimal price;
     @CreationTimestamp

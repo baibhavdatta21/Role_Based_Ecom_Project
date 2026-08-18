@@ -8,7 +8,6 @@ public class UserApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(UserApplication.class, args);
-		System.out.println("The user is up and running...");
 	}
 
 }
